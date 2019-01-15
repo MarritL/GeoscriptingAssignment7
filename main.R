@@ -32,9 +32,14 @@ nlMunicipalityPro <- spTransform(nlMunicipality, crs(proj4string(modis)))
 maskModis <- mask(modis, nlMunicipalityPro)
 
 
+validMuns <- nlMunicipalityPro@data[!is.na(nlMunicipalityPro$NAME_2),] # Remove rows with NA
 
+munNDVI <- extract(maskModis, layer = 1, nlMunicipalityPro, fun = mean, df = TRUE)
+munNDVI2 <- cbind(nlMunicipalityPro$NAME_2, munNDVI)
+colnames(munNDVI2[1]) <- "municipality"
 
-
-
+which(munNDVI == max(munNDVI[!is.na(munNDVI)]))
+length(validMuns)
+length(munNDVI)
 
 
