@@ -45,6 +45,12 @@ munMeanProvince <- munNDVI %>% group_by(Province) %>% summarise(meanProvince = m
 munMaxProvince <- as.character(munMeanProvince[which(munMeanProvince$meanProvince == max(munMeanProvince$meanProvince)),'Province'])
 nlProvincePro <- raster::aggregate(nlMunicipalityPro, by = 'NAME_1', dissolve = TRUE)
 
+# calculate which province has the highest NDVI
+munNDVI$Province <- nlMunicipality$NAME_1
+munMeanProvince <- munNDVI %>% group_by(Province) %>% summarise(meanProvince = mean(January))
+munMaxProvince <- as.character(munMeanProvince[which(munMeanProvince$meanProvince == max(munMeanProvince$meanProvince)),'Province'])
+nlProvincePro <- raster::aggregate(nlMunicipalityPro, by = 'NAME_1', dissolve = TRUE)
+
 ## Set graphical parameters (one row and two columns)
 opar <- par(mfrow=c(1,2))
 
@@ -54,7 +60,7 @@ plot(nlProvincePro[nlProvincePro$NAME_1 == munMaxProvince,], add = TRUE, col = '
 mtext(side = 1, line = -1, "Coordinate system: Sinusoidal \n Authors: A.-J. Welsink, M. Leenstra ", adj = 1, cex = 0.4)
 legend("topleft", legend = "Utrecht", col = 'green', pch = 20, cex = 0.6)
 
-# plot municipality with highest NDVI
+# plot municipalities with highest NDVI
 nlMunicipalityPro@data <- nlMunicipalityPro@data[!is.na(nlMunicipalityPro$NAME_2),]
 plot(nlMunicipalityPro, lwd = 0.1, main = paste("Greenest Dutch municipality in January, August, and year-round"), axes = TRUE)
 plot(nlMunicipalityPro[nlMunicipalityPro$NAME_2 == munMaxJan,], lwd = 0.1, add = TRUE, col = 'red')
