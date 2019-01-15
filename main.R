@@ -66,6 +66,6 @@ plot(nlMunicipalityPro, lwd = 0.1, main = paste("Greenest Dutch municipality in 
 plot(nlMunicipalityPro[nlMunicipalityPro$NAME_2 == munMaxJan,], lwd = 0.1, add = TRUE, col = 'red')
 plot(nlMunicipalityPro[nlMunicipalityPro$NAME_2 == munMaxAugust,], lwd = 0.1, add = TRUE, col = 'blue')
 plot(nlMunicipalityPro[nlMunicipalityPro$NAME_2 == munMaxYear,], lwd = 0.1, add = TRUE, col = 'green')
-mtext(side = 1, line = -2, "Coordinate system: Sinusoidal \n Authors: A.-J. Welsink, M. Leenstra ", adj = 1, cex = 0.4)
+mtext(side = 1, line = -1, "Coordinate system: Sinusoidal \n Authors: A.-J. Welsink, M. Leenstra ", adj = 1, cex = 0.4)
 legend("topleft", legend = c(paste("Highest NDVI January: \n", munMaxJan), paste("\n Highest NDVI August: \n", munMaxAugust), paste("\n Highest mean NDVI year-round: \n", munMaxYear)), col = c('red', 'blue', 'green'), pch = 20, cex = 0.6, bty = 'n')
 
