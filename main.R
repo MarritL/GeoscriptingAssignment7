@@ -6,11 +6,10 @@
 # greenest in January, in August on average over the year. 
 
 # load libraries
-if (!require("sp")) {
-  install.packages("sp")
-}
+if (!require("sp")) install.packages("sp")
+if (!require("raster")) install.packages("raster")
 
-library(sp)
+# library(sp)
 
 # source functions
 source("R/retrieveData.R")
@@ -28,7 +27,9 @@ nlMunicipality <- getData('GADM',country='NLD', level=2, path = "data")
 path <- list.files(path = "data/", pattern = glob2rx('*.grd'), full.names = TRUE)
 modis <- brick(path)
 
-
+# transform to equal coordinate system and mask
+nlMunicipalityPro <- spTransform(nlMunicipality, crs(proj4string(modis)))
+maskModis <- mask(modis, nlMunicipalityPro)
 
 
 
