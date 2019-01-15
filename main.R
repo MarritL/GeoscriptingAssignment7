@@ -8,7 +8,7 @@
 # load libraries
 if (!require("sp")) install.packages("sp") 
 if (!require("raster")) install.packages("raster")
-if (!require("dplyr")) install.package("dplyr")
+if (!require("dplyr")) install.packages("dplyr")
 library(sp)
 library(raster)
 library(dplyr)
@@ -38,11 +38,22 @@ munMaxAugust <- munNDVI[which(munNDVI$August == max(munNDVI$August[!is.na(munNDV
 munNDVI$mean <- rowMeans(munNDVI[,2:13], na.rm = TRUE) 
 munMaxYear <- munNDVI[which(munNDVI$mean == max(munNDVI$mean[!is.na(munNDVI$mean)])),'municipality']
 
+# calculate which province has the highest NDVI
+munNDVI$Province <- nlMunicipality$NAME_1
+munMeanProvince <- munNDVI %>% group_by(Province) %>% summarise(meanProvince = mean(January))
+munMaxProvince <- as.character(munMeanProvince[which(munMeanProvince$meanProvince == max(munMeanProvince$meanProvince)),'Province'])
+nlProvincePro <- raster::aggregate(nlMunicipalityPro, by = 'NAME_1', dissolve = TRUE)
+
 ## Set graphical parameters (one row and two columns)
 opar <- par(mfrow=c(1,2))
 
+# plot province with highest NVDI
+plot(nlProvincePro, lwd = 0.15, main = paste("Greenest Dutch province in January"), axes = TRUE)
+plot(nlProvincePro[nlProvincePro$NAME_1 == munMaxProvince,], add = TRUE, col = 'green', lwd = 0.1)
+mtext(side = 1, line = -1, "Coordinate system: Sinusoidal \n Authors: A.-J. Welsink, M. Leenstra ", adj = 1, cex = 0.4)
+legend("topleft", legend = "Utrecht", col = 'green', pch = 20, cex = 0.6)
 
-# plot
+# plot municipalities with highest NDVI
 nlMunicipalityPro@data <- nlMunicipalityPro@data[!is.na(nlMunicipalityPro$NAME_2),]
 plot(nlMunicipalityPro, lwd = 0.1, main = paste("Greenest Dutch municipality in January, August, and year-round"), axes = TRUE)
 plot(nlMunicipalityPro[nlMunicipalityPro$NAME_2 == munMaxJan,], lwd = 0.1, add = TRUE, col = 'red')
@@ -51,14 +62,4 @@ plot(nlMunicipalityPro[nlMunicipalityPro$NAME_2 == munMaxYear,], lwd = 0.1, add 
 mtext(side = 1, line = -2, "Coordinate system: Sinusoidal \n Authors: A.-J. Welsink, M. Leenstra ", adj = 1, cex = 0.4)
 legend("topleft", legend = c(paste("Highest NDVI January: \n", munMaxJan), paste("\n Highest NDVI August: \n", munMaxAugust), paste("\n Highest mean NDVI year-round: \n", munMaxYear)), col = c('red', 'blue', 'green'), pch = 20, cex = 0.6, bty = 'n')
 
-# calculate which province has the highest NDVI
-munNDVI$Province <- nlMunicipality$NAME_1
-munMeanProvince <- munNDVI %>% group_by(Province) %>% summarise(meanProvince = mean(January))
-munMaxProvince <- as.character(munMeanProvince[which(munMeanProvince$meanProvince == max(munMeanProvince$meanProvince)),'Province'])
-nlProvincePro <- raster::aggregate(nlMunicipalityPro, by = 'NAME_1', dissolve = TRUE)
 
-# plot
-plot(nlProvincePro, lwd = 0.15, main = paste("Greenest Dutch province in January"), axes = TRUE)
-plot(nlProvincePro[nlProvincePro$NAME_1 == munMaxProvince,], add = TRUE, col = 'green', lwd = 0.1)
-mtext(side = 1, line = -1, "Coordinate system: Sinusoidal \n Authors: A.-J. Welsink, M. Leenstra ", adj = 1, cex = 0.4)
-legend("topleft", legend = "Utrecht", col = 'green', pch = 20, cex = 0.6)
